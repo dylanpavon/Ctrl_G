@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <title>gastos</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/css/style.css" rel="stylesheet" type="text/css">
+  <script src="https://kit.fontawesome.com/9fc711ed30.js" crossorigin="anonymous"></script>
+
+  <style>
+    #img {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body id="fondoOscuro">
+
+  <header>
+    <nav th:replace="index :: navbar"></nav>
+  </header>
+  <div th:replace="index :: modaleditarp"></div>
+  <div class="container" id="fondoRosa">
+    <div class="row">
+      <br>
+      <div style="text-align:center; color: aliceblue; margin: 1em;">
+        <h4><strong>Mis gastos</strong></h4>
+      </div>
+      <br>
+    </div>
+    <table class="table table-success">
+
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Monto</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Comprobante</th>
+          <th scope="col">Modificar</th>
+          <th scope="col">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="gasto:${gastos}">
+          <td th:text="${gasto.fecha}"></td>
+          <td th:text="${gasto.monto}"></td>
+          <td th:text="${gasto.categoria.nombre}"></td>
+          <!--esta bien la lista de categorias?, el error estaba en que se pasaba tanto nombre como value, solo hacia falta el nombre.
+        y faltaba el 'gasto.' antes de categoria, ya que es la categoria del gasto-->
+          <td th:text="${gasto.descripcion}"></td>
+          <td>
+            <a class="abrir-comprobante btn btn-link-primary" role="button" data-bs-toggle="modal"
+              data-bs-target="#mostrarComprobante" th:attr="data-url=|${'/comprobante/gasto' + gasto.id}|"
+              th:data-url="${'/comprobante/gasto/' + gasto.id}"><img th:if="${gasto.comprobante}" width="100"
+                height="auto" th:src="${'/comprobante/gasto/' + gasto.id}"></a>
+          </td>
+
+          <td><a class="abrir-editar btn btn-link-primary" role="button" data-bs-toggle="modal"
+              data-bs-target="#modificar" th:data-id="${gasto.id}" th:data-monto="${gasto.monto}"
+              th:data-descripcion="${gasto.descripcion}"><i class="fa-solid fa-pencil"></i></a></td>
+          <td><a class="btn btn-link" th:attr="onclick=|borrar('${gasto.id}')|" role="button"><i
+                class="fa-solid fa-trash" style="color:red ;"></i></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- The Mostrar Comprobante -->
+    <div class="modal" id="mostrarComprobante">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: transparent; border: none;">
+          <div class="modal-body">
+            <img src="" id="comprobanteModal" style="width: 100%; max-width: 2000px; margin: auto;"></img>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Modificar -->
+    <div class="modal" id="modificar">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" style="color:#0AE000 ;"><strong>Modificar Gasto</strong></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body" style="color:#0AE000 ;">
+            <form th:action="@{/gasto/modificar}" method="POST" enctype="multipart/form-data">
+              <input hidden class="form-control" type="text" value="" id="id-modificar" name="id" readonly>
+              <p>Monto:</p>
+              <input type="number" class="form-control" id="monto-modificar" placeholder="Ingrese su gasto"
+                name="monto" />
+              <br />
+              <p>Descripcion:</p>
+              <input type="text" class="form-control" id="descripcion-modificar" placeholder="Descripción" minlength="0"
+                maxlength="100" name="descripcion" />
+              <br />
+              <p>Categorias:</p>
+              <select class="form-control" name="categoria">
+                <option th:each="categoria : ${categorias}" th:text="${categoria.nombre}" th:value="${categoria}">
+                </option>
+              </select>
+              <br />
+              <p>Ingrese comprobante:</p>
+
+              <input type="file" class="form-control" name="archivo" />
+              <br>
+
+              <button type="submit" style="background-color:#0AE000;" class="btn btn-success" data-bs-dismiss="modal">
+                Editar gasto
+              </button>
+            </form>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--div th:replace="index :: footer"></div-->
+
+
+  <script>
+    $(document).on("click", ".abrir-editar", function () {
+      var gastoId = $(this).data('id');
+      var gastoMonto = $(this).data('monto');
+      var gastoDescripcion = $(this).data('descripcion');
+      $(".modal-body #id-modificar").val(gastoId);
+      $(".modal-body #monto-modificar").val(gastoMonto);
+      $(".modal-body #descripcion-modificar").val(gastoDescripcion);
+    });
+  </script>
+
+  <script>
+    function borrar(id) {
+      let text = "Seguro desea borrar el gasto?\nAprete Aceptar o Cancelar.";
+      if (confirm(text) === true) {
+        $.post("/gasto/eliminar", { id: id });
+        return "/gasto/listar"; // no funciona el retorno, deberia buscar la forma de hacer el servicio sincrono y que se espere a que termine para el redirect?
+      }
+    }
+  </script>
+
+  <script>
+    $(document).on("click", ".abrir-comprobante", function () {
+      var comprobanteUrl = $(this).data("url");
+      console.log(comprobanteUrl);
+      $(".modal-body #comprobanteModal").attr('src', comprobanteUrl);
+    });
+  </script>
+
+  <script>
+    function mostrar() {
+      document.getElementById('img').style.display = 'block';
+    }
+
+    function ocultar() {
+      document.getElementById('img').style.display = 'none';
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

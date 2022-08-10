@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <title>ingresos</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/css/style.css" rel="stylesheet" type="text/css">
+  <script src="https://kit.fontawesome.com/9fc711ed30.js" crossorigin="anonymous"></script>
+
+  <style>
+    #imgg {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body id="fondoOscuro">
+  <header>
+    <nav th:replace="index :: navbar"></nav>
+  </header>
+  <div th:replace="index :: modaleditarp"></div>
+
+  <div class="container">
+    <div class="row">
+      <br>
+      <div style="text-align:center; color: aliceblue; margin: 1em;">
+        <h4><strong>Mis ingresos</strong></h4>
+      </div>
+      <br>
+      <table class="table table-primary">
+
+        <table class="table table-success">
+
+          <thead>
+            <tr>
+              <th scope="col">Fecha</th>
+              <th scope="col">Monto</th>
+              <th scope="col">Categoria</th>
+              <th scope="col">Descripcion</th>
+              <th scope="col">Comprobante</th>
+              <th scope="col">Modificar</th>
+              <th scope="col">Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="ingreso:${ingresos}">
+              <td th:text="${ingreso.fecha}"></td>
+              <td th:text="${ingreso.monto}"></td>
+              <td th:if="${ingreso.categoria}" th:text="${ingreso.categoria.nombre}"></td>
+              <td th:text="${ingreso.descripcion}"></td>
+              <td>
+                <a class="abrir-comprobante btn btn-link-primary" role="button" data-bs-toggle="modal"
+                data-bs-target="#mostrarComprobante" th:attr="data-url=|${'/comprobante/ingreso' + ingreso.id}|" th:data-url="${'/comprobante/ingreso/' + ingreso.id}"><img
+                  th:if="${ingreso.comprobante}" width="100" height="auto"
+                  th:src="${'/comprobante/ingreso/' + ingreso.id}"></a>
+              </td>
+              <td><a class="abrir-editar btn btn-link-primary" role="button" data-bs-toggle="modal"
+                  data-bs-target="#modificar" th:data-id="${ingreso.id}" th:data-monto="${ingreso.monto}" th:data-descripcion="${ingreso.descripcion}"><i
+                    class="fa-solid fa-pencil"></i></a></td>
+              <td><a class="btn btn-link" th:attr="onclick=|borrar('${ingreso.id}')|" role="button"><i
+                    class="fa-solid fa-trash" style="color:red ;"></i></td>
+              </a>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+  <!-- The Modal modificar -->
+  <div class="modal" id="modificar">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="color:#0AE000 ;"><strong>Modificar Ingreso</strong></h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body" style="color:#0AE000 ;">
+          <form th:action="@{/ingreso/modificar}" method="POST" enctype="multipart/form-data">
+            <input hidden class="form-control" type="text" value="" id="id-modificar" name="id" readonly>
+            <p>Monto:</p>
+            <input type="number" class="form-control" id="monto-modificar" placeholder="Ingrese su ingreso" name="monto" />
+            <br />
+            <p>Descripcion:</p>
+            <input type="text" class="form-control" id="descripcion-modificar" placeholder="Descripcion" minlength="0" maxlength="100"
+              name="descripcion" />
+            <br />
+            <p>Categorias:</p>
+            <select class="form-control" name="categoria">
+              <option th:each="categoria : ${categoriasingreso}" th:text="${categoria.nombre}" th:value="${categoria}">
+              </option>
+            </select>
+            <br>
+            <p>Ingrese comprobante:</p>
+            <input type="file" class="form-control" name="archivo" />
+            <br>
+
+            <button type="submit" style="background-color:#0AE000;" class="btn btn-success" data-bs-dismiss="modal">
+              Editar ingreso
+            </button>
+          </form>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- The Mostrar Comprobante -->
+  <div class="modal" id="mostrarComprobante">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color: transparent; border: none;">
+        <div class="modal-body">
+          <img src="" id="comprobanteModal" style="width: 100%; max-width: 2000px; margin: auto;"></img>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--div th:replace="index :: footer"></div-->
+
+  <script>
+    function borrar(id) {
+      let text = "Seguro desea borrar el gasto?\nAprete Aceptar o Cancelar.";
+      if (confirm(text) === true) {
+        $.post("/ingreso/eliminar", { id: id });
+        return "/ingreso/listar"; // no funciona el retorno, deberia buscar la forma de hacer el servicio sincrono y que se espere a que termine para el redirect?
+      }
+    }
+  </script>
+  <script>
+    $(document).on("click", ".abrir-comprobante", function () {
+      var comprobanteUrl = $(this).data("url");
+      console.log(comprobanteUrl);
+      $(".modal-body #comprobanteModal").attr('src', comprobanteUrl);
+    });
+  </script>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+    crossorigin="anonymous"></script>
+
+  <script>
+    $(document).on("click", ".abrir-editar", function () {
+      var ingresoId = $(this).data('id');
+      var ingresoMonto = $(this).data('monto');
+      var ingresoDescripcion = $(this).data('descripcion');
+      $(".modal-body #id-modificar").val(ingresoId);
+      $(".modal-body #monto-modificar").val(ingresoMonto);
+      $(".modal-body #descripcion-modificar").val(ingresoDescripcion);
+    });
+  </script>
+
+  <script>
+    function mostrar() {
+      document.getElementById('imgg').style.display = 'block';
+    }
+
+    function ocultar() {
+      document.getElementById('imgg').style.display = 'none';
+    }
+  </script>
+
+</body>
+
+</html>

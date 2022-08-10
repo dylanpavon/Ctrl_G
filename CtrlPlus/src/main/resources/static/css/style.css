@@ -1,0 +1,130 @@
+*{
+  margin: 0px;
+  padding: 0px;
+  
+}
+/*-----------------------Style vista LOGIN-----------------------*/
+body#blogin{
+
+  background-image:url(/img/fondosinmarcadeagua.jpg) ;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+nav#nanvarlogin{
+ border:solid;
+ border-color:#0AE000 ;
+ 
+}
+
+.modal-content{
+
+  background-color:rgb(3, 63, 7);
+
+}
+
+
+
+div#general{
+  margin: auto;
+  margin-top: 50px;
+  width: 1280px;
+  height: 800px;
+  background-color: transparent;
+
+}
+
+div#divbot{
+  padding-top:130px;
+  float:right ;
+  background-color:transparent;
+}
+div#divbot img{
+    margin-bottom: 20px;
+}
+
+div#imagenlogin{
+  width: 920px;
+  height: 800px;
+  background-image:url(/img/iniciologin.jpg);
+}
+
+
+#botonimagen{
+  background-color: aquamarine;
+}
+
+
+
+
+
+/*-----------------------Final vista LOGIN-----------------------*/
+
+/*-----------------------Inicio vista Ingresos-Gastos-----------------------*/
+
+
+
+
+button#botonmas{
+border-radius: 100%;
+width: 100px;
+height: 100px;
+float:left;
+position:relative;top: 500px;
+}
+
+button#botonmenos{
+  border-radius: 100%;
+  width: 100px;
+  height: 100px;
+  float: right;
+  position:relative;top: 500px;
+
+  }
+
+#generalingresos{
+  margin: auto;
+  width: 1280px;
+  height: 800px;
+  background-color:#d1e7dd;;
+}
+#generalingresoss{
+  padding-top: 50px;
+  margin: auto;
+  width: 950px;
+  height: 800px;
+  background-color:#d1e7dd;;
+
+}
+
+nav#nanvaringresos{
+  border:solid;
+  border-color:#0AE000 ;
+  
+
+}
+
+body#fondoOscuro{
+  background-color:#202124;
+}
+
+footer {
+  position: static;
+  left: 0;
+  bottom: 0;
+}
+
+/*-----------------------Final vista ------------------------*/
+
+
+
+
+
+
+
+
+
+/*-----------------------Final vista Indexs------------------------*/
+

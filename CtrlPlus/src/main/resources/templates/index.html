@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+  <head>
+    <title>inicio</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <script
+      src="https://kit.fontawesome.com/9fc711ed30.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body
+    id="fondoOscuro"
+    th:attr="onload=|result(
+        '${totalAlquiler}', 
+        '${totalAlimentos}',
+        '${totalMovilidad}',
+        '${totalSalud}',
+        '${totalCompras}',
+        '${totalServicios}',
+        '${totalImpuestos}',
+        '${totalAhorros}',
+        '${totalDeportes}',
+        '${totalTarjetasDeCreditos}',
+        '${totalDonaciones}',
+        '${totalPrestamos}',
+        '${totalOtros}',
+        '${alquiler}', 
+        '${alimentos}',
+        '${movilidad}',
+        '${salud}',
+        '${compras}',
+        '${servicios}',
+        '${impuestos}',
+        '${ahorros}',
+        '${deportes}',
+        '${tarjetas}',
+        '${donaciones}',
+        '${prestamos}',
+        '${otros}')|"
+  >
+    <header>
+      <nav
+        id="nanvaringresos"
+        class="navbar navbar-expand-lg navbar-dark bg-dark"
+        th:fragment="navbar"
+      >
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/inicio"
+            ><img width="150" height="60" src="\img\logoctrl.png"
+          /></a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/inicio"
+                  ><strong>Inicio</strong></a
+                >
+              </li>
+
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <strong>Mi Dinero</strong>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <a class="dropdown-item" href="/ingreso/listar"
+                      >Ver Ingresos</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/gasto/listar">Ver Gastos</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link disabled"
+                  href="#"
+                  tabindex="-1"
+                  aria-disabled="true"
+                  style="text-align: center"
+                  ><strong><i>CtrlG+</i></strong></a
+                >
+              </li>
+            </ul>
+
+            <div class="btn-group">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                id="navbarDropdown"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fa fa-user"></i>
+                <i
+                  th:if="${session}"
+                  th:text="${session.usuariosession.nombre}"
+                ></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    style="background-color: transparent; border: transparent"
+                    data-bs-toggle="modal"
+                    data-bs-target="#eperfil"
+                  >
+                    Editar Perfil
+                  </button>
+
+                  <hr class="dropdown-divider" />
+
+                  <a class="dropdown-item" href="/logout">Cerrar Sesión</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div th:fragment="modaleditarp">
+      <div class="modal" id="eperfil">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <div style="text-align: center">
+                <h4 class="modal-title" style="color: #0ae000">
+                  <strong>Editar Perfil</strong>
+                </h4>
+              </div>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                style="background-color: #0ae000"
+              ></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body" style="color: #0ae000">
+              <form action="/usuario/editar" method="post">
+                <input
+                  hidden
+                  class="form-control"
+                  type="text"
+                  th:value="${session.usuariosession.id}"
+                  id="id-modificarp"
+                  name="id"
+                  readonly
+                />
+                <p>Ingrese su nuevo mail:</p>
+                <input
+                  type="text"
+                  class="form-control"
+                  th:value="${session.usuariosession.mail}"
+                  placeholder=" Ingrese su nuevo mail"
+                  name="mail"
+                />
+                <br />
+                <p>Ingrese su nuevo nombre:</p>
+                <input
+                  type="text"
+                  class="form-control"
+                  th:value="${session.usuariosession.nombre}"
+                  placeholder=" Ingrese su nuevo nombre"
+                  name="nombre"
+                />
+                <br />
+                <p>Cambiar Contraseña:</p>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Cambiar Contraseña"
+                  minlength="0"
+                  maxlength="100"
+                  name="clave"
+                />
+                <br />
+                <p>Confirme Contraseña:</p>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Confirme Contraseña"
+                  minlength="0"
+                  maxlength="100"
+                  name="clave2"
+                />
+                <br />
+
+                <button
+                  type="submit"
+                  style="background-color: #0ae000"
+                  class="btn btn-success"
+                  data-bs-dismiss="modal"
+                >
+                  Editar Perfil
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--inicio capas-->
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <div id="generalingresos">
+      <div id="generalingresoss">
+        <h1 style="text-align: center">
+          <strong>Tu saldo actual es:</strong>
+        </h1>
+        <h1 style="text-align: center">
+          $
+          <strong th:text="${saldo}"></strong>
+        </h1>
+        <button
+          type="button"
+          class="btn btn-success"
+          style="background-color: #0ae000"
+          data-bs-toggle="modal"
+          data-bs-target="#ingresos"
+          id="botonmas"
+        >
+          <h1 style="font-size: 50px"><strong>+</strong></h1>
+        </button>
+        <button
+          style="background-color: red"
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#gastos"
+          id="botonmenos"
+        >
+          <h1 style="font-size: 60px"><strong>-</strong></h1>
+        </button>
+        <div
+          style="
+            margin-left: auto;
+            margin-right: auto;
+            width: 500px;
+            height: 500px;
+            margin-top: 20px;
+          "
+        >
+          <canvas id="myChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!--Fin capas -->
+
+    <!--inicio MODALS-->
+
+    <!-- The Modal -->
+    <div class="modal" id="ingresos">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" style="color: #0ae000">
+              <strong>Agregar Ingresos</strong>
+            </h4>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body" style="color: #0ae000">
+            <form
+              th:action="@{/ingreso/ingresar}"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <p>Monto:</p>
+              <input
+                type="number"
+                name="monto"
+                class="form-control"
+                placeholder="Ingrese su dinero"
+              />
+              <br />
+              <p>Descripción:</p>
+              <input
+                type="text"
+                name="descripcion"
+                class="form-control"
+                placeholder="Descripción"
+                minlength="0"
+                maxlength="100"
+              />
+              <br />
+              <p>Categorias:</p>
+              <select class="form-control" name="categoria">
+                <option
+                  th:each="categoria : ${categoriasingreso}"
+                  th:text="${categoria.nombre}"
+                  th:value="${categoria}"
+                ></option>
+              </select>
+              <br />
+              <p>Ingrese comprobante:</p>
+
+              <input type="file" class="form-control" name="archivo" />
+
+              <button
+                type="submit"
+                style="background-color: #0ae000"
+                class="btn btn-success"
+                data-bs-dismiss="modal"
+              >
+                Agregar Ingreso
+              </button>
+            </form>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Moda2 -->
+    <div class="modal" id="gastos">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" style="color: #0ae000">
+              <strong>Agregar Gastos</strong>
+            </h4>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body" style="color: #0ae000">
+            <form
+              th:action="@{/gasto/ingresar}"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <p>Monto:</p>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Ingrese su gasto"
+                name="monto"
+              />
+              <br />
+              <p>Descripcion:</p>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Descripcion"
+                minlength="0"
+                maxlength="100"
+                name="descripcion"
+              />
+              <br />
+              <p>Categorias:</p>
+              <select class="form-control" name="categoria">
+                <option
+                  th:each="categoria : ${categorias}"
+                  th:text="${categoria.nombre}"
+                  th:value="${categoria}"
+                ></option>
+              </select>
+              <br />
+              <p>Ingrese comprobante:</p>
+
+              <input type="file" class="form-control" name="archivo" />
+              <br />
+
+              <button
+                type="submit"
+                style="background-color: #0ae000"
+                class="btn btn-success"
+                data-bs-dismiss="modal"
+              >
+                Agregar Gasto
+              </button>
+            </form>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer
+          class="text-center text-white"
+          style="background-color: #202124; width: 100%;"
+          id="contacto"
+          th:fragment="footer"
+        >
+          <!-- Grid container -->
+          <div class="container pt-4">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+              <!-- Facebook -->
+              <a
+                class="btn btn-link text-light"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+
+              <!-- Twitter -->
+              <a
+                class="btn btn-link btn-floating btn-lg text-light m-1"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-twitter"></i
+              ></a>
+
+              <!-- Google -->
+              <a
+                class="btn btn-link btn-floating btn-lg text-light m-1"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-google"></i
+              ></a>
+
+              <!-- Instagram -->
+              <a
+                class="btn btn-link btn-floating btn-lg text-light m-1"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-instagram"></i
+              ></a>
+
+              <!-- Linkedin -->
+              <a
+                class="btn btn-link btn-floating btn-lg text-light m-1"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-linkedin"></i
+              ></a>
+              <!-- Github -->
+              <a
+                class="btn btn-link btn-floating btn-lg text-light m-1"
+                href="#!"
+                role="button"
+                data-mdb-ripple-color="light"
+                ><i class="fab fa-github"></i
+              ></a>
+            </section>
+            <!-- Section: Social media -->
+          </div>
+          <!-- Grid container -->
+
+          <!-- Copyright -->
+          <div
+            class="text-center text-light p-3"
+            style="background-color: rgba(0, 0, 0, 0.2)"
+          >
+            © 2022 Copyright
+          </div>
+          <!-- Copyright -->
+        </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      function result(
+        totalAlquiler,
+        totalAlimentos,
+        totalMovilidad,
+        totalSalud,
+        totalCompras,
+        totalServicios,
+        totalImpuestos,
+        totalAhorros,
+        totalDeportes,
+        totalTarjetasDeCreditos,
+        totalDonaciones,
+        totalPrestamos,
+        totalOtros,
+        alquiler,
+        alimentos,
+        movilidad,
+        salud,
+        compras,
+        servicios,
+        impuestos,
+        ahorros,
+        deportes,
+        tarjetas,
+        donaciones,
+        prestamos,
+        otros
+      ) {
+        const ctx = document.getElementById("myChart").getContext("2d");
+        const myChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: [
+              alquiler,
+              alimentos,
+              movilidad,
+              salud,
+              compras,
+              servicios,
+              impuestos,
+              ahorros,
+              deportes,
+              tarjetas,
+              donaciones,
+              prestamos,
+              otros,
+            ], //th:text de opciones 1 y 2/
+            datasets: [
+              {
+                label: "Mis Gastos", //Total de votos/
+                data: [
+                  totalAlquiler,
+                  totalAlimentos,
+                  totalMovilidad,
+                  totalSalud,
+                  totalCompras,
+                  totalServicios,
+                  totalImpuestos,
+                  totalAhorros,
+                  totalDeportes,
+                  totalTarjetasDeCreditos,
+                  totalDonaciones,
+                  totalPrestamos,
+                  totalOtros,
+                ], //Resultados de las opciones de voto 1 y 2/
+                backgroundColor: [
+                  "rgba(255, 0, 110, 0.7)",
+                  "rgba(58, 134, 255, 0.7)",
+                  "rgba(70, 130, 180, 0.7)",
+                  "rgba(255, 235, 205, 0.7)",
+                  "rgba(127, 255, 0, 0.7)",
+                  "rgba(245, 130, 48, 0.7)",
+                  "rgba(128, 0, 0, 0.7)",
+                  "rgba(0, 255, 255, 0.7)",
+                  "rgba(0, 0, 139, 0.7)",
+                  "rgba(0, 139, 139, 0.7)",
+                  "rgba(153, 50, 204, 0.7)",
+                  "rgba(170, 110, 70, 0.7)",
+                  "rgba(255, 0, 0, 0.7)",
+                ],
+                borderColor: [
+                  "rgba(255, 0, 110, 1)",
+                  "rgba(58, 134, 255, 1)",
+                  "rgba(70, 130, 180, 1)",
+                  "rgba(255, 235, 205, 1)",
+                  "rgba(127, 255, 0, 1)",
+                  "rgba(245, 130, 48, 1)",
+                  "rgba(128, 0, 0, 1)",
+                  "rgba(0, 255, 255, 1)",
+                  "rgba(0, 0, 139, 1)",
+                  "rgba(0, 139, 139, 1)",
+                  "rgba(153, 50, 204, 1)",
+                  "rgba(170, 110, 70, 1)",
+                  "rgba(255, 0, 0, 1)",
+                ],
+
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
